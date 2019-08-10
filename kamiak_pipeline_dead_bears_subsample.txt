@@ -1,0 +1,44 @@
+#Subsample the fastq files to 5600000 reads for comparing to second year hibernation
+
+file_name=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$1}')
+read1=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$2}')
+
+
+seqtk sample -s 100 ${read1} 5600000 > fastq_files/${file_name}
+
+#Map using Hisat2
+
+file_name=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$1}')
+read1=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$2}')
+read2=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$3}')
+
+
+hisat2 --phred33 -k 10 --met-file stats/${file_name}.stats --rg-id ${file_name} --rg SM:${file_name} --rg PL:illumina \
+-p 1 --rna-strandness RF --fr --dta --un-conc-gz unmapped/${file_name}.unmapped \
+-x /data/kelley/projects/bear_RNA/Uarctoshorribilis/Uarctoshorribilis -1 ${read1} -2 ${read2} -S samfiles/${file_name}.sam
+
+#Clean up sams and zip
+
+file_name=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$1}')
+sam_in=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print$2}')
+
+
+java -Xmx6G -jar /data/cornejo/projects/programs/picard-tools-2.2.1/picard.jar FixMateInformation INPUT=${sam_in} \
+OUTPUT=/scratch/shawn.trojahn_138442/${file_name}.fix.sam VALIDATION_STRINGENCY=SILENT
+
+samtools view -@ 10 -b -h /scratch/shawn.trojahn_138442/${file_name}.fix.sam >/scratch/shawn.trojahn_138442/${file_name}.bam
+
+samtools sort -m 4G -o results/${file_name}_sorted_fixed.bam -O bam -T ${file_name} -@ 10 /scratch/shawn.trojahn_138442/${file_name}.bam
+
+#Generate counts matrix per sample
+
+file_name=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print $1}')
+read1=$(sed -n ''$SLURM_ARRAY_TASK_ID'p' datatable | awk '{print $2}')
+
+stringtie ${read1} -o output/${file_name} -m 50 --rf -e -B -c 10 -p 2 \
+-G /data/kelley/projects/bear_RNA/Uarctoshorribilis/GCF_003584765.1_ASM358476v1_modified.gff
+
+#Generate overall counts matrix for DE analysis in R
+
+python /data/kelley/projects/programs/pythonScripts/prepDE.py -i sample_lst_readssubsampled.txt -g gene_count_readssubsampled.csv -t transcript_count_readssubsampled.csv
+
