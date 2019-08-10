@@ -1,5 +1,3 @@
-setwd("C:/Users/ShawnTrojahn/Desktop/Bear_rnaseq_project/Final Products/Brown Bear")
-
 library(edgeR)
 library(DESeq2)
 library(WGCNA)
@@ -19,7 +17,6 @@ gene_all <- read.csv("gene_count_readssubsampled.csv",header=T, row.names=1)
 #deadbears=deadbears[,which(colnames(deadbears) %in% c("B01_S2_L003","B11_S19_L003","B17_S1_L003","D01_S3_L003","D10_S30_L003","D16_S18_L003"))]
 #merge the tables by gene name
 #gene_all=data.frame(merge(gene_all,deadbears, by="row.names", all.x = T),row.names = 1)
-
 
 
 bearData.all = read.table("sampleData.txt", header = T, row.names = 1)
