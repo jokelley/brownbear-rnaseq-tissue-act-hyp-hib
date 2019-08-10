@@ -41,4 +41,3 @@ stringtie ${read1} -o output/${file_name} -m 50 --rf -e -B -c 10 -p 2 \
 #Generate overall counts matrix for DE analysis in R
 
 python /data/kelley/projects/programs/pythonScripts/prepDE.py -i sample_lst_readssubsampled.txt -g gene_count_readssubsampled.csv -t transcript_count_readssubsampled.csv
-
