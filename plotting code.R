@@ -11,19 +11,12 @@ gene.id = read.csv("IDmap_2019_02_20.csv", header = T)
 
 gene_all <- read.csv("gene_count_readssubsampled.csv",header=T, row.names=1)
 
-# Load dead bear file generated from reference and merge with other gene count matrix
-
-#deadbears <- read.csv("gene_count_matrix_deadbears.csv", header = T, row.names = 1)
-#deadbears=deadbears[,which(colnames(deadbears) %in% c("B01_S2_L003","B11_S19_L003","B17_S1_L003","D01_S3_L003","D10_S30_L003","D16_S18_L003"))]
-#merge the tables by gene name
-#gene_all=data.frame(merge(gene_all,deadbears, by="row.names", all.x = T),row.names = 1)
-
+# Load bear file generated from reference and merge with other gene count matrix
 
 bearData.all = read.table("sampleData.txt", header = T, row.names = 1)
 
 # Count number of transcripts and number of individuals
 dim(gene_all)
-
 
 
 # Subset data with CFA removed 
@@ -79,19 +72,6 @@ dev.off()
 #Construct MDS on top 10,000 expressed transcripts 
 mds <- plotMDS(y, top=10000, gene.selection = "common", cex=0.5)
 
-
-
-# ROAN VS PACINO ALL PLOTS
-
-
-
-# Load gene counts file generated from reference
-#setwd("C:/Users/ShawnTrojahn/Desktop/Bear_rnaseq_project/Final Products/Brown Bear")
-#gene_all<-read.csv("gene_count_matrix-2019-02-20.csv",header=T, row.names = 1)
-#deadbears <- read.csv("gene_count_matrix_deadbears.csv", header = T, row.names = 1)
-#deadbears=deadbears[,which(colnames(deadbears) %in% c("B01_S2_L003","B11_S19_L003","B17_S1_L003","D01_S3_L003","D10_S30_L003","D16_S18_L003"))]
-#merge the tables by gene name
-#gene_all=data.frame(merge(gene_all,deadbears, by="row.names", all.x = T),row.names = 1)
 
 
 ################################################################################################
@@ -487,16 +467,6 @@ legend("topleft", bty="n", legend = paste("R2=", format(summary(fit)$adj.r.squar
 
 par(opar)
 dev.off()
-
-#Plotting Fat Vs Other Tissue (means I had to normalize all samples together)
-
-# Load gene counts file generated from reference
-setwd("C:/Users/ShawnTrojahn/Desktop/Bear_rnaseq_project/Final Products/Brown Bear")
-#gene_all<-read.csv("gene_count_matrix-2019-02-20.csv",header=T, row.names = 1)
-#deadbears <- read.csv("gene_count_matrix_deadbears.csv", header = T, row.names = 1)
-#deadbears=deadbears[,which(colnames(deadbears) %in% c("B01_S2_L003","B11_S19_L003","B17_S1_L003","D01_S3_L003","D10_S30_L003","D16_S18_L003"))]
-#merge the tables by gene name
-#gene_all=data.frame(merge(gene_all,deadbears, by="row.names", all.x = T),row.names = 1)
 
 
 ################################################################################################
@@ -958,31 +928,4 @@ gene_boxplot_liver = function(d, n, i){
   stripchart(tmgene$value ~ tmgene$Var1, vertical=T,add=T,pch=20,cex=.75)
   dev.off()
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
